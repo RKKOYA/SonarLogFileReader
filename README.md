@@ -7,4 +7,5 @@ This project was made due to the overall program becoming complex to not have a 
 ## Credit
 Herbert Oppman
 For documenting how Lowrance sonar log files are formatted.
+<br>
 ![Document](https://www.memotech.franken.de/FileFormats/Navico_SLG_Format.pdf)
