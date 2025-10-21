@@ -8,7 +8,7 @@
 #include <vector>
 #include <cstddef>
 #include <variant>
-#include "SonarLogFileReader.h"
+#include "../include/SonarLogFileReader.h"
 
 
 std::ostream& operator<<(std::ostream& out, const std::byte& b)
@@ -59,16 +59,22 @@ std::ostream& operator<<(std::ostream& out, const SonarBuilder::LogFile::Format&
 	return out;
 }
 
+unsigned short operator&(const SonarBuilder::LogFile::Frame::Format1::Flags& flag, const unsigned int& flags)
+{
+	return static_cast<unsigned short>(flag) & flags;
+}
+
 void readFrame(std::ifstream& inf, SonarBuilder::LogFile::Frame::Format1::Frame* frame)
 {
+	using Flags = SonarBuilder::LogFile::Frame::Format1::Flags;
 	// custom deserialization due to flags
 	// Credit: Herbert Oppman (https://www.memotech.franken.de/FileFormats/Navico_SLG_Format.pdf, page 5)
-	inf.read(reinterpret_cast<char*>(&(frame->metadata.flags), 		sizeof(frame->metadata.flags));
-	inf.read(reinterpret_cast<char*>(&(frame->metadata.lowerLimit), sizeof(frame->metadata.lowerLimit));
-	inf.read(reinterpret_cast<char*>(&(frame->metadata.waterDepth), sizeof(frame->metadata.waterDepth));
+	inf.read(reinterpret_cast<char*>(&(frame->metadata.flags)), 	 sizeof(frame->metadata.flags));
+	inf.read(reinterpret_cast<char*>(&(frame->metadata.lowerLimit)), sizeof(frame->metadata.lowerLimit));
+	inf.read(reinterpret_cast<char*>(&(frame->metadata.waterDepth)), sizeof(frame->metadata.waterDepth));
 
-	if (static_cast<unsigned short>(SonarBuilder::LogFile::Frame::Format1::Flags::upperlimitValid) & frame->metadata.flags))
-		inf.read(reinterpret_cast<char*>(&(frame->metadata.upperLimit), sizeof(frame->metadata.upperlimit));
+	if (static_cast<unsigned short>(Flags::upperLimitValid & frame->metadata.flags))
+		inf.read(reinterpret_cast<char*>(&(frame->metadata.upperLimit)), sizeof(frame->metadata.upperLimit));
 
 	//if (static_cast<unsigned short>(SonarBuilder::LogFile::Frame::Format1::Flags::upperlimitValid) & frame->metadata.flags))
 	//	inf.read(reinterpret_cast<char*>(&(frame->metadata.upperLimit), sizeof(frame->metadata.upperlimit));
@@ -113,7 +119,7 @@ int main()
 	using Format3Frame = SonarBuilder::LogFile::Frame::Format3::Frame;
 	
 	// header
-	std::string fileName{ "sonarOnly/Sonar_2025-02-09_13.59.02.slg" };
+	std::string fileName{ "testing/sonarOnly/Sonar_2025-02-09_13.59.02.slg" };
 	std::ifstream inf{ fileName, std::ios::binary };
 	if (!inf)
 	{
@@ -137,18 +143,18 @@ int main()
 	printHeader(fileHeader.get());
 	
 	// format 1, 2, or 3 frames
-	Format format{ static_cast<Format>(fileHeader->format) };
 	std::variant<std::unique_ptr<Format1Frame>, std::unique_ptr<Format2Frame>, std::unique_ptr<Format3Frame>> frame;
+	using namespace std::literals;
 	
-	if (format == Format::slg)
+	if (fileName.ends_with(".slg"))
 	{
 		frame = std::make_unique<Format1Frame>();
 	}
-	else if (format == Format::sl2)
+	else if (fileName.ends_with(".sl2"))
 	{
 		frame = std::make_unique<Format2Frame>();
 	}
-	else if (format == Format::sl3)
+	else if (fileName.ends_with(".sl3"))
 	{
 		frame = std::make_unique<Format3Frame>();
 	}

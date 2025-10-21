@@ -16,12 +16,20 @@
 #include <array>
 #include <iostream>
 #include <iomanip>
+#include <variant>
 
 
 namespace SonarBuilder
 {
 	namespace LogFile
-	{
+	{	
+		enum class Format
+		{
+			slg,
+			sl2,
+			sl3,
+		};
+		
 		struct Header
 		{
 			unsigned short 	format;
@@ -46,14 +54,14 @@ namespace SonarBuilder
 					temp3Valid				= 1 << 5,
 					waterSpeedValid			= 1 << 6,
 					positionValid			= 1 << 7,
-					depthInvalid			= 1 << 8,	// inverted
+					depthInvalid			= 1 << 8,	// flag is inverted
 					surfaceDepthValid		= 1 << 9,
 					topOfBottomDepthValid	= 1 << 10,
 					columnIs50kHz			= 1 << 11,
 					timeOffsetValid			= 1 << 12,
 					speedAndTrackValid		= 1 << 13,
 					unused					= 1 << 14,
-				}
+				};
 				
 				struct Metadata
 				{
@@ -104,6 +112,7 @@ namespace SonarBuilder
 					out << std::setw(40) << std::left << "flags: " 			<< std::right << flags << '\n';
 					out << std::setw(40) << std::left << "lowerLimit: " 	<< std::right << metadata.lowerLimit << '\n';
 					out << std::setw(40) << std::left << "waterDepth: " 	<< std::right << metadata.waterDepth << '\n';
+					out << std::setw(40) << std::left << "upperLimit: " 	<< std::right << metadata.upperLimit << '\n';
 					out << "======================================================================\n";
 
 					return out;
@@ -309,17 +318,17 @@ namespace SonarBuilder
 
 					std::byte frequency;
 
-					std::array<std::byte, 11>	unknown4;
+					std::array<std::byte, 11>	unknown5;
 
-					float	unknown5;
 					float	unknown6;
 					float	unknown7;
 					float	unknown8;
+					float	unknown9;
 
-					std::byte unknown9;
 					std::byte unknown10;
 					std::byte unknown11;
 					std::byte unknown12;
+					std::byte unknown13;
 
 					float	gpsSpeedInKnots;
 
@@ -334,12 +343,12 @@ namespace SonarBuilder
 					float altituteAboveSeaLevelInFeet;
 					float headingInRadians;
 
-					unsigned int unknown13;
+					unsigned int unknown14;
 
-					std::byte unknown14;
 					std::byte unknown15;
 					std::byte unknown16;
 					std::byte unknown17;
+					std::byte unknown18;
 
 					unsigned int	timeOffsetInMs;
 					unsigned int	lastPrimaryChannel;
@@ -349,7 +358,7 @@ namespace SonarBuilder
 					unsigned int	lastRightSidescanChannel;
 					unsigned int	lastCompositeSidescanChannel;
 
-					std::array<unsigned int, 3> unknown18;
+					std::array<unsigned int, 3> unknown19;
 
 					unsigned int	last3dscanChannel;
 				};
@@ -357,12 +366,12 @@ namespace SonarBuilder
 				struct Channel7Soundingdata
 				{
 					std::vector<std::byte> values;
-				}
+				};
 
 				struct Channel8Soundingdata
 				{
 					std::vector<unsigned short> values;
-				}
+				};
 
 				struct Channel9Soundingdata
 				{
@@ -383,24 +392,24 @@ namespace SonarBuilder
 					std::vector<std::pair<float, float>> section2;
 
 					// section 3
-					unsigned int	unknown3;
 					unsigned int	unknown4;
 					unsigned int	unknown5;
 					unsigned int	unknown6;
+					unsigned int	unknown7;
 
-					std::variant<std::vector<float>, std::vector<unsigned int>> uknown7;
+					std::variant<std::vector<float>, std::vector<unsigned int>> uknown8;
 
-					std::array<std::byte, 4> unknown8;
-					std::byte unknown9;
+					std::array<std::byte, 4> unknown9;
+					std::byte unknown10;
 
 					std::vector<std::byte> padding;
-				}
+				};
 
 				struct Frame
 				{
 					Metadata metadata;
 					std::variant<Channel7Soundingdata, Channel8Soundingdata, Channel9Soundingdata> soundingdata;
-				}
+				};
 			}
 		}
 	}
