@@ -46,21 +46,22 @@ namespace SonarBuilder
 			{
 				enum class Flags
 				{
-					unknown0				= 1 << 0,
-					unknown1 				= 1 << 1,
+					unknown0Valid			= 1 << 0,
+					unknown1Valid			= 1 << 1,
 					altitudeValid			= 1 << 2,
 					upperLimitValid			= 1 << 3,
-					temp2Valid				= 1 << 4,
-					temp3Valid				= 1 << 5,
-					waterSpeedValid			= 1 << 6,
-					positionValid			= 1 << 7,
-					depthInvalid			= 1 << 8,	// flag is inverted
-					surfaceDepthValid		= 1 << 9,
-					topOfBottomDepthValid	= 1 << 10,
-					columnIs50kHz			= 1 << 11,
-					timeOffsetValid			= 1 << 12,
-					speedAndTrackValid		= 1 << 13,
-					unused					= 1 << 14,
+					waterTempValid			= 1 << 4,
+					temp2Valid				= 1 << 5,
+					temp3Valid				= 1 << 6,
+					waterSpeedValid			= 1 << 7,
+					positionValid			= 1 << 8,
+					depthInvalid			= 1 << 9,	// flag is inverted
+					surfaceDepthValid		= 1 << 10,
+					topOfBottomDepthValid	= 1 << 11,
+					columnIs50kHz			= 1 << 12,
+					timeOffsetValid			= 1 << 13,
+					speedAndTrackValid		= 1 << 14,
+					unused					= 1 << 15,
 				};
 				
 				struct Metadata
@@ -113,6 +114,22 @@ namespace SonarBuilder
 					out << std::setw(40) << std::left << "lowerLimit: " 	<< std::right << metadata.lowerLimit << '\n';
 					out << std::setw(40) << std::left << "waterDepth: " 	<< std::right << metadata.waterDepth << '\n';
 					out << std::setw(40) << std::left << "upperLimit: " 	<< std::right << metadata.upperLimit << '\n';
+					out << std::setw(40) << std::left << "waterTempInCel: " << std::right << metadata.waterTempInCel << '\n';
+					out << std::setw(40) << std::left << "waterSpeed: " 	<< std::right << metadata.waterSpeed << '\n';
+					out << std::setw(40) << std::left << "northingInMercatorMeters: " 	<< std::right << metadata.northingInMercatorMeters << '\n';
+					out << std::setw(40) << std::left << "eastingInMercatorMeters: " 	<< std::right << metadata.eastingInMercatorMeters << '\n';
+					out << std::setw(40) << std::left << "surfaceDepth: " 	<< std::right << metadata.surfaceDepth << '\n';
+					out << std::setw(40) << std::left << "topOfBottomDepth: " 	<< std::right << metadata.topOfBottomDepth << '\n';
+					out << std::setw(40) << std::left << "temp2InCel: " 	<< std::right << metadata.temp2InCel << '\n';
+					out << std::setw(40) << std::left << "temp3InCel: " 	<< std::right << metadata.temp3InCel << '\n';
+					out << std::setw(40) << std::left << "unknownDepth: " 	<< std::right << metadata.unknownDepth << '\n';
+					out << std::setw(40) << std::left << "unknown1: " 	<< std::right << metadata.unknown1 << '\n';
+					out << std::setw(40) << std::left << "unknown2: " 	<< std::right << metadata.unknown2 << '\n';
+					out << std::setw(40) << std::left << "timeOffset: " 	<< std::right << metadata.timeOffset << '\n';
+					out << std::setw(40) << std::left << "nauticalSpeed: " 	<< std::right << metadata.nauticalSpeed << '\n';
+					out << std::setw(40) << std::left << "trackInRadians: " 	<< std::right << metadata.trackInRadians << '\n';
+					out << std::setw(40) << std::left << "altitude: " 	<< std::right << metadata.altitude << '\n';
+					out << std::setw(40) << std::left << "packetSize: " 	<< std::right << metadata.packetSize << '\n';
 					out << "======================================================================\n";
 
 					return out;

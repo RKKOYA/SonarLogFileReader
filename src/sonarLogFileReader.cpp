@@ -76,8 +76,49 @@ void readFrame(std::ifstream& inf, SonarBuilder::LogFile::Frame::Format1::Frame*
 	if (static_cast<unsigned short>(Flags::upperLimitValid & frame->metadata.flags))
 		inf.read(reinterpret_cast<char*>(&(frame->metadata.upperLimit)), sizeof(frame->metadata.upperLimit));
 
-	//if (static_cast<unsigned short>(SonarBuilder::LogFile::Frame::Format1::Flags::upperlimitValid) & frame->metadata.flags))
-	//	inf.read(reinterpret_cast<char*>(&(frame->metadata.upperLimit), sizeof(frame->metadata.upperlimit));
+	if (static_cast<unsigned short>(Flags::waterTempValid) & frame->metadata.flags)
+		inf.read(reinterpret_cast<char*>(&(frame->metadata.waterTempInCel)), sizeof(frame->metadata.waterTempInCel));
+
+	if (static_cast<unsigned short>(Flags::waterSpeedValid) & frame->metadata.flags)
+		inf.read(reinterpret_cast<char*>(&(frame->metadata.waterSpeed)), sizeof(frame->metadata.waterSpeed));
+
+	if (static_cast<unsigned short>(Flags::positionValid) & frame->metadata.flags)
+		inf.read(reinterpret_cast<char*>(&(frame->metadata.northingInMercatorMeters)), sizeof(frame->metadata.northingInMercatorMeters));
+
+	if (static_cast<unsigned short>(Flags::positionValid) & frame->metadata.flags)
+		inf.read(reinterpret_cast<char*>(&(frame->metadata.eastingInMercatorMeters)), sizeof(frame->metadata.eastingInMercatorMeters));
+
+	if (!static_cast<unsigned short>(Flags::depthInvalid) & frame->metadata.flags) // flag is inverted
+		inf.read(reinterpret_cast<char*>(&(frame->metadata.surfaceDepth)), sizeof(frame->metadata.surfaceDepth));
+
+	if (static_cast<unsigned short>(Flags::topOfBottomDepthValid) & frame->metadata.flags)
+		inf.read(reinterpret_cast<char*>(&(frame->metadata.topOfBottomDepth)), sizeof(frame->metadata.topOfBottomDepth));
+
+	if (static_cast<unsigned short>(Flags::temp2Valid) & frame->metadata.flags)
+		inf.read(reinterpret_cast<char*>(&(frame->metadata.temp2InCel)), sizeof(frame->metadata.temp2InCel));
+
+	if (static_cast<unsigned short>(Flags::temp3Valid) & frame->metadata.flags)
+		inf.read(reinterpret_cast<char*>(&(frame->metadata.temp3InCel)), sizeof(frame->metadata.temp3InCel));
+
+	if (static_cast<unsigned short>((Flags::unknown0Valid & frame->metadata.flags) && (Flags::speedAndTrackValid & frame->metadata.flags)))
+		inf.read(reinterpret_cast<char*>(&(frame->metadata.unknownDepth)), sizeof(frame->metadata.unknownDepth));
+
+	if (static_cast<unsigned short>(Flags::unknown1Valid) & frame->metadata.flags)
+		inf.read(reinterpret_cast<char*>(&(frame->metadata.unknown1)), sizeof(frame->metadata.unknown1));
+
+	if (static_cast<unsigned short>(Flags::unknown1Valid) & frame->metadata.flags)
+		inf.read(reinterpret_cast<char*>(&(frame->metadata.unknown2)), sizeof(frame->metadata.unknown2));
+
+	inf.read(reinterpret_cast<char*>(&(frame->metadata.timeOffset)), sizeof(frame->metadata.timeOffset));
+
+	if (static_cast<unsigned short>(Flags::speedAndTrackValid) & frame->metadata.flags)
+		inf.read(reinterpret_cast<char*>(&(frame->metadata.nauticalSpeed)), sizeof(frame->metadata.nauticalSpeed));
+
+	if (static_cast<unsigned short>(Flags::speedAndTrackValid) & frame->metadata.flags)
+		inf.read(reinterpret_cast<char*>(&(frame->metadata.trackInRadians)), sizeof(frame->metadata.trackInRadians));
+
+	if (static_cast<unsigned short>(Flags::altitudeValid) & frame->metadata.flags)
+		inf.read(reinterpret_cast<char*>(&(frame->metadata.altitude)), sizeof(frame->metadata.altitude));
 }
 
 void readFrame(std::ifstream& inf, SonarBuilder::LogFile::Frame::Format2::Frame* frame)
