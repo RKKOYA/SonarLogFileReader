@@ -25,9 +25,9 @@ namespace SonarBuilder
 	{	
 		enum class Format
 		{
-			slg,
-			sl2,
-			sl3,
+			slg = 1,
+			sl2 = 2,
+			sl3 = 3,
 		};
 		
 		struct Header

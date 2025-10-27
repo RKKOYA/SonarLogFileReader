@@ -71,7 +71,11 @@ void readFrame(std::ifstream& inf, SonarBuilder::LogFile::Frame::Format1::Frame*
 	// Credit: Herbert Oppman (https://www.memotech.franken.de/FileFormats/Navico_SLG_Format.pdf, page 5)
 	inf.read(reinterpret_cast<char*>(&(frame->metadata.flags)), 	 sizeof(frame->metadata.flags));
 	inf.read(reinterpret_cast<char*>(&(frame->metadata.lowerLimit)), sizeof(frame->metadata.lowerLimit));
-	inf.read(reinterpret_cast<char*>(&(frame->metadata.waterDepth)), sizeof(frame->metadata.waterDepth));
+
+	if (!static_cast<unsigned short>(Flags::depthInvalid & frame->metadata.flags)) // flag is inverted
+		inf.read(reinterpret_cast<char*>(&(frame->metadata.waterDepth)), sizeof(frame->metadata.waterDepth));
+	else
+		inf.seekg(inf.tellg() + static_cast<std::istream::pos_type>(sizeof(frame->metadata.waterDepth)));
 
 	if (static_cast<unsigned short>(Flags::upperLimitValid & frame->metadata.flags))
 		inf.read(reinterpret_cast<char*>(&(frame->metadata.upperLimit)), sizeof(frame->metadata.upperLimit));
@@ -88,7 +92,7 @@ void readFrame(std::ifstream& inf, SonarBuilder::LogFile::Frame::Format1::Frame*
 	if (static_cast<unsigned short>(Flags::positionValid) & frame->metadata.flags)
 		inf.read(reinterpret_cast<char*>(&(frame->metadata.eastingInMercatorMeters)), sizeof(frame->metadata.eastingInMercatorMeters));
 
-	if (!static_cast<unsigned short>(Flags::depthInvalid) & frame->metadata.flags) // flag is inverted
+	if (static_cast<unsigned short>(Flags::surfaceDepthValid) & frame->metadata.flags)
 		inf.read(reinterpret_cast<char*>(&(frame->metadata.surfaceDepth)), sizeof(frame->metadata.surfaceDepth));
 
 	if (static_cast<unsigned short>(Flags::topOfBottomDepthValid) & frame->metadata.flags)
@@ -119,6 +123,8 @@ void readFrame(std::ifstream& inf, SonarBuilder::LogFile::Frame::Format1::Frame*
 
 	if (static_cast<unsigned short>(Flags::altitudeValid) & frame->metadata.flags)
 		inf.read(reinterpret_cast<char*>(&(frame->metadata.altitude)), sizeof(frame->metadata.altitude));
+
+	inf.read(reinterpret_cast<char*>(&(frame->metadata.packetSize)), sizeof(frame->metadata.packetSize));
 }
 
 void readFrame(std::ifstream& inf, SonarBuilder::LogFile::Frame::Format2::Frame* frame)
@@ -160,7 +166,7 @@ int main()
 	using Format3Frame = SonarBuilder::LogFile::Frame::Format3::Frame;
 	
 	// header
-	std::string fileName{ "testing/sonarOnly/Sonar_2025-02-09_13.59.02.slg" };
+	std::string fileName{ "testing/sonarOnly/small.slg" };
 	std::ifstream inf{ fileName, std::ios::binary };
 	if (!inf)
 	{
@@ -187,15 +193,15 @@ int main()
 	std::variant<std::unique_ptr<Format1Frame>, std::unique_ptr<Format2Frame>, std::unique_ptr<Format3Frame>> frame;
 	using namespace std::literals;
 	
-	if (fileName.ends_with(".slg"))
+	if (fileHeader->format == static_cast<unsigned short>(SonarBuilder::LogFile::Format::slg))
 	{
 		frame = std::make_unique<Format1Frame>();
 	}
-	else if (fileName.ends_with(".sl2"))
+	else if (fileHeader->format == static_cast<unsigned short>(SonarBuilder::LogFile::Format::sl2))
 	{
 		frame = std::make_unique<Format2Frame>();
 	}
-	else if (fileName.ends_with(".sl3"))
+	else if (fileHeader->format == static_cast<unsigned short>(SonarBuilder::LogFile::Format::sl3))
 	{
 		frame = std::make_unique<Format3Frame>();
 	}
