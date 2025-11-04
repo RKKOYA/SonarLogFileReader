@@ -64,7 +64,7 @@ unsigned short operator&(const SonarBuilder::LogFile::Frame::Format1::Flags& fla
 	return static_cast<unsigned short>(flag) & flags;
 }
 
-void readFrame(std::ifstream& inf, SonarBuilder::LogFile::Frame::Format1::Frame* frame)
+void readFrame(std::ifstream& inf, SonarBuilder::LogFile::Frame::Format1::Frame* frame, const SonarBuilder::LogFile::Header* fileHeader)
 {
 	using Flags = SonarBuilder::LogFile::Frame::Format1::Flags;
 	// custom deserialization due to flags
@@ -125,9 +125,13 @@ void readFrame(std::ifstream& inf, SonarBuilder::LogFile::Frame::Format1::Frame*
 		inf.read(reinterpret_cast<char*>(&(frame->metadata.altitude)), sizeof(frame->metadata.altitude));
 
 	inf.read(reinterpret_cast<char*>(&(frame->metadata.packetSize)), sizeof(frame->metadata.packetSize));
+	
+	frame->soundingdata.values.reserve(static_cast<std::size_t>(fileHeader->bytesPerSounding) - (static_cast<std::size_t>(inf.tellg()) - sizeof(SonarBuilder::LogFile::Header)));
+	frame->soundingdata.values.resize(static_cast<std::size_t>(fileHeader->bytesPerSounding) - (static_cast<std::size_t>(inf.tellg()) - sizeof(SonarBuilder::LogFile::Header)));	
+	inf.read(reinterpret_cast<char*>((frame->soundingdata.values.data())), frame->soundingdata.values.size());
 }
 
-void readFrame(std::ifstream& inf, SonarBuilder::LogFile::Frame::Format2::Frame* frame)
+void readFrame(std::ifstream& inf, SonarBuilder::LogFile::Frame::Format2::Frame* frame, const SonarBuilder::LogFile::Header* fileHeader)
 {
 	inf.read(reinterpret_cast<char*>(&(frame->metadata)), sizeof(frame->metadata));
 	
@@ -137,7 +141,7 @@ void readFrame(std::ifstream& inf, SonarBuilder::LogFile::Frame::Format2::Frame*
 	inf.read(reinterpret_cast<char*>(frame->soundingdata.values.data()), (frame->metadata.packetSize));
 }
 
-void readFrame(std::ifstream& inf, SonarBuilder::LogFile::Frame::Format3::Frame* frame)
+void readFrame(std::ifstream& inf, SonarBuilder::LogFile::Frame::Format3::Frame* frame, const SonarBuilder::LogFile::Header* fileHeader)
 {
 	
 }
@@ -166,7 +170,7 @@ int main()
 	using Format3Frame = SonarBuilder::LogFile::Frame::Format3::Frame;
 	
 	// header
-	std::string fileName{ "testing/sonarOnly/small.slg" };
+	std::string fileName{ "testing/sonarOnly/sonar.slg" };
 	std::ifstream inf{ fileName, std::ios::binary };
 	if (!inf)
 	{
@@ -213,9 +217,9 @@ int main()
 
 	try
 	{
-		std::visit([&inf](auto&& f)
+		std::visit([&inf, &fileHeader](auto& frame)
 		{
-			readFrame(inf, f.get());
+			readFrame(inf, frame.get(), fileHeader.get());
 		}, frame);
 	}
 	catch (const std::ios_base::failure& e)
@@ -224,10 +228,10 @@ int main()
 		inf.close();
 		return 1;
 	}
-
-	std::visit([](auto&& f)
+	
+	std::visit([](auto& frame)
 	{
-		printFrame(f.get());
+		printFrame(frame.get());
 	}, frame);
 
 	inf.close();

@@ -110,26 +110,38 @@ namespace SonarBuilder
 					out << "----------------- METADATA ----------------\n";
 
 					const std::bitset<16> flags { metadata.flags };
-					out << std::setw(40) << std::left << "flags: " 			<< std::right << flags << '\n';
-					out << std::setw(40) << std::left << "lowerLimit: " 	<< std::right << metadata.lowerLimit << '\n';
-					out << std::setw(40) << std::left << "waterDepth: " 	<< std::right << metadata.waterDepth << '\n';
-					out << std::setw(40) << std::left << "upperLimit: " 	<< std::right << metadata.upperLimit << '\n';
+					
+					out << std::setw(40) << std::left << "flags: " 	<< std::right << flags << '\n';
+
+					out << std::setw(40) << std::left << "lowerLimit: " << std::right << metadata.lowerLimit << '\n';
+					out << std::setw(40) << std::left << "waterDepth: " << std::right << metadata.waterDepth << '\n';
+					out << std::setw(40) << std::left << "upperLimit: " << std::right << metadata.upperLimit << '\n';
+					
 					out << std::setw(40) << std::left << "waterTempInCel: " << std::right << metadata.waterTempInCel << '\n';
-					out << std::setw(40) << std::left << "waterSpeed: " 	<< std::right << metadata.waterSpeed << '\n';
+					
+					out << std::setw(40) << std::left << "waterSpeed: " << std::right << metadata.waterSpeed << '\n';
+					
 					out << std::setw(40) << std::left << "northingInMercatorMeters: " 	<< std::right << metadata.northingInMercatorMeters << '\n';
 					out << std::setw(40) << std::left << "eastingInMercatorMeters: " 	<< std::right << metadata.eastingInMercatorMeters << '\n';
-					out << std::setw(40) << std::left << "surfaceDepth: " 	<< std::right << metadata.surfaceDepth << '\n';
+					
+					out << std::setw(40) << std::left << "surfaceDepth: " 		<< std::right << metadata.surfaceDepth << '\n';
 					out << std::setw(40) << std::left << "topOfBottomDepth: " 	<< std::right << metadata.topOfBottomDepth << '\n';
-					out << std::setw(40) << std::left << "temp2InCel: " 	<< std::right << metadata.temp2InCel << '\n';
-					out << std::setw(40) << std::left << "temp3InCel: " 	<< std::right << metadata.temp3InCel << '\n';
-					out << std::setw(40) << std::left << "unknownDepth: " 	<< std::right << metadata.unknownDepth << '\n';
-					out << std::setw(40) << std::left << "unknown1: " 	<< std::right << metadata.unknown1 << '\n';
-					out << std::setw(40) << std::left << "unknown2: " 	<< std::right << metadata.unknown2 << '\n';
-					out << std::setw(40) << std::left << "timeOffset: " 	<< std::right << metadata.timeOffset << '\n';
+					
+					out << std::setw(40) << std::left << "temp2InCel: " << std::right << metadata.temp2InCel << '\n';
+					out << std::setw(40) << std::left << "temp3InCel: " << std::right << metadata.temp3InCel << '\n';
+					
+					out << std::setw(40) << std::left << "unknownDepth: " << std::right << metadata.unknownDepth << '\n';
+					
+					out << std::setw(40) << std::left << "unknown1: " << std::right << metadata.unknown1 << '\n';
+					out << std::setw(40) << std::left << "unknown2: " << std::right << metadata.unknown2 << '\n';
+					
+					out << std::setw(40) << std::left << "timeOffset: " << std::right << metadata.timeOffset << '\n';
+					
 					out << std::setw(40) << std::left << "nauticalSpeed: " 	<< std::right << metadata.nauticalSpeed << '\n';
-					out << std::setw(40) << std::left << "trackInRadians: " 	<< std::right << metadata.trackInRadians << '\n';
-					out << std::setw(40) << std::left << "altitude: " 	<< std::right << metadata.altitude << '\n';
-					out << std::setw(40) << std::left << "packetSize: " 	<< std::right << metadata.packetSize << '\n';
+					out << std::setw(40) << std::left << "trackInRadians: " << std::right << metadata.trackInRadians << '\n';
+					out << std::setw(40) << std::left << "altitude: " 		<< std::right << metadata.altitude << '\n';
+					
+					out << std::setw(40) << std::left << "packetSize: " << std::right << metadata.packetSize << '\n';
 					out << "======================================================================\n";
 
 					return out;
