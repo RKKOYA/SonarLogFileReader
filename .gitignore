@@ -1,8 +1,5 @@
 # do not include sonar log files in the testing folders
-*.slg
-*.sl2
-*.sl3
-*.xtf
+/testing
 
 # no compiled binaries
 /build/debug/bin/.*
